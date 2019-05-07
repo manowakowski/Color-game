@@ -1,49 +1,51 @@
 const tab = ["rgb(255,0,0)","rgb(0,0,255)","rgb(0,255,0)"];
-let randomTab = [];
+
 let counter = "";
 let karty = document.querySelectorAll('[data-summary = "karta"]');
 
 
-
-
-
-
 // 1. Tworzy tablice 8io elementowa
 function threeRandom() {
+    let rt = [];
     do {
         let randomNumber = Math.ceil(Math.random() * 3);
         if (randomNumber === 1){
-            randomTab.push(tab[0])
+            rt.push(tab[0])
         } else if (randomNumber === 2 ){
-            randomTab.push(tab[1])
+            rt.push(tab[1])
         } else {
-            randomTab.push(tab[2])
+            rt.push(tab[2])
         }
-        randomNumber = "";
-    } while (randomTab.length < 8);
-} 
-threeRandom()
+    } while (rt.length < 8);
+    return rt;
+}
+
 
 // 2. Z tablicy 8io elementowej podstawia kolory
-function tlo() {
-    for (let i=0; i < randomTab.length; i++){
-        $('#c'+i).css("background",randomTab[i]);
-        if (randomTab[i] === "rgb(255,0,0)"){
-            document.getElementById("c"+i).classList.add("czerwony");
-        } else if (randomTab[i] === "rgb(0,255,0)") {
-            document.getElementById("c"+i).classList.add("zielony");
+function tlo(randTab) {
+    for (let i=0; i < randTab.length; i++){
+        $('#c'+i).css("background",randTab[i]);
+        let selectedColor;
+        if (randTab[i] === "rgb(255,0,0)"){
+            selectedColor = "czerwony";
+        } else if (randTab[i] === "rgb(0,255,0)") {
+            selectedColor = " zielony";
         } else {
-            document.getElementById("c"+i).classList.add("niebieski");
+            selectedColor = "niebieski";
         }
+        $('#c' + i).addClass(selectedColor);
     }
 }
-tlo()
+
+let randomTab = threeRandom();
+tlo(randomTab);
 
 // 3. Losuje kolor do klikania
 function kliknijW() {
     let randomColor = Math.ceil(Math.random() * 3)
     if (randomColor === 1){
-        document.querySelector('[data-summary="kolor"]').textContent = "czerwony";
+        $(".kolorek").html("czerwony");
+        // document.querySelector('[data-summary="kolor"]').textContent = "czerwony";
         document.querySelector('[data-summary="kolor"]').style.color = "red";
     } else if (randomColor === 2){
         document.querySelector('[data-summary="kolor"]').textContent = "niebieski"
@@ -56,32 +58,10 @@ function kliknijW() {
 kliknijW()
 
 
-function kaka(){
-    let zmiennaKoloru = document.querySelector('p span').textContent;
-    if (this.classList.contains("zielony") === true && zmiennaKoloru === "zielony" && this.style.boxShadow === ""){
-        console.log("zzielony");
-        counter++;
-        this.style.boxShadow = '0 0 0 4px black';
-        document.querySelector(`[data-summary="punkty"]`).textContent = `${counter}`;   
-    } else if (this.classList.contains("czerwony") === true && zmiennaKoloru === "czerwony" && this.style.boxShadow === ""){
-        console.log("cczerwony");
-        counter++;
-        this.style.boxShadow = '0 0 0 4px black';
-        document.querySelector(`[data-summary="punkty"]`).textContent = `${counter}`;   
-    } else if (this.classList.contains("niebieski") === true && zmiennaKoloru === "niebieski" && this.style.boxShadow === ""){
-        console.log("nniebieski")
-        counter++;
-        this.style.boxShadow = '0 0 0 4px black';
-        document.querySelector(`[data-summary="punkty"]`).textContent = `${counter}`;   
-    } else {
-        console.log("niccc")
-    }
-}
-
 function renderNewTab(){
-    randomTab = [];
+    randomTab = threeRandom();
     threeRandom();
-    tlo();
+    tlo(randomTab);
     kliknijW();
     karty.forEach(item =>item.style.boxShadow = "");
 
@@ -92,7 +72,23 @@ function renderNewTab(){
 
 
 document.querySelector("button").addEventListener('click', renderNewTab);
-karty.forEach(item => item.addEventListener('click', kaka));
+
+$(".karta").each(function (index, el) {
+    $(el).click(function (event) {
+        let zmiennaKoloru = document.querySelector('p span').textContent;
+
+        if($(this).hasClass(zmiennaKoloru) && $(this).css('box-shadow') === "none") {
+            console.log(zmiennaKoloru);
+            counter++;
+            $(this).css('box-shadow', '0 0 0 4px black');
+            document.querySelector(`[data-summary="punkty"]`).textContent = `${counter}`;
+        }
+    });
+});
+
+// karty.forEach(
+//     item => item.addEventListener('click', kaka)
+// );
 
 
 
